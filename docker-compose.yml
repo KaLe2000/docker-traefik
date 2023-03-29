@@ -1,0 +1,22 @@
+version: '3.7'
+
+services:
+
+  traefik:
+    image: traefik:2.9.9
+    # https://doc.traefik.io/traefik/providers/docker/
+    # api.insecure доступность дашборда
+    # providers.docker указываем траефику слушать докер
+    # providers.docker.network внешняя сеть для сервисов
+    # providers.docker.exposedByDefault не подключать сервисы с расшареными портами в свою сеть
+    # configFile путь до конфига.yml
+    command: --api.insecure=true --providers.docker=true --providers.docker.network=traefik_network --providers.docker.exposedByDefault=false
+    ports:
+      - '80:80' # HTTP port
+      - '8080:8080' # dashboard port
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock # так траефик может слушать события докера
+
+networks:
+  default:
+    name: traefik_network
